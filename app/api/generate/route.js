@@ -12,7 +12,7 @@ export async function POST(req) {
     if (type === 'itinerary') {
       const { cities, travelers, budget } = data
       const cityList = cities.map(c => {
-        const hotelList = c.hotels.map(h => `Day${h.checkin} 체크인: ${h.name}`).join(', ')
+        const hotelList = (c.hotels||[{checkin:c.startDay, name:c.hotel||'미정'}]).map(h => `Day${h.checkin} 체크인: ${h.name}`).join(', ')
         return `${c.name}(${c.country}) ${c.days}일 - Day${c.startDay}~Day${c.endDay}, 숙소: [${hotelList}], 이동수단: ${c.transport}, 시작시간: ${c.startTime}`
       }).join('\n')
 
