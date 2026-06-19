@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import styles from './page.module.css'
 
 const TRANSPORT_OPTIONS = ['도보', '대중교통', '택시/그랩', '렌트카', '기차']
 const START_TIME_OPTIONS = ['종일 (09:00~)', '오후부터 (13:00~)', '저녁만 (18:00~)']
