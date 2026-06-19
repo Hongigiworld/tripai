@@ -12,8 +12,13 @@ export async function POST(req) {
     if (type === 'itinerary') {
       const { cities, travelers, budget } = data
       const cityList = cities.map(c => {
-        const hotelList = (c.hotels||[{checkin:c.startDay, name:c.hotel||'미정'}]).map(h => `Day${h.checkin} 체크인: ${h.name}`).join(', ')
-        return `${c.name}(${c.country}) ${c.days}일 - Day${c.startDay}~Day${c.endDay}, 숙소: [${hotelList}], 이동수단: ${c.transport}, 시작시간: ${c.startTime}`
+        let hotelInfo = '미정'
+        if (c.hotels && Array.isArray(c.hotels) && c.hotels.length > 0) {
+          hotelInfo = c.hotels.map(h => `Day${h.checkin} 체크인: ${h.name||'미정'}`).join(', ')
+        } else if (c.hotel) {
+          hotelInfo = c.hotel
+        }
+        return `${c.name}(${c.country||''}) ${c.days}일 - Day${c.startDay}~Day${c.endDay}, 숙소: [${hotelInfo}], 이동수단: ${c.transport||'대중교통'}, 시작시간: ${c.startTime||'종일'}`
       }).join('\n')
 
       prompt = `다음 조건으로 여행 일정을 JSON으로만 만들어줘.
@@ -42,7 +47,6 @@ JSON 형식:
           "time": "09:00",
           "name": "장소명",
           "desc": "한줄설명",
-          "type": "attraction|food|transport|hotel",
           "budget": "예상금액(1인)",
           "klook": "klook검색키워드 or null",
           "maps": "구글맵검색어",
@@ -83,23 +87,23 @@ JSON만.`
         "visa": true,
         "master": true,
         "amex": false,
-        "cash": "현금 필요도 (필수/권장/선택)",
-        "cashTip": "현금 관련 팁",
+        "cash": "필수/권장/선택",
+        "cashTip": "현금 팁",
         "exchangeTip": "환전 팁"
       },
       "sim": {
-        "recommend": "추천 유심/이심 브랜드",
+        "recommend": "추천 유심 브랜드",
         "price": "가격대",
         "tip": "유심 팁"
       },
       "transport": {
-        "app": "추천 교통 앱 (Grab/Uber/기타)",
+        "app": "추천 교통 앱",
         "tip": "교통 팁",
         "card": "교통카드 정보"
       },
       "culture": {
-        "tip": "팁 문화 (식당 몇 % 등)",
-        "caution": "주의사항 1~2개"
+        "tip": "팁 문화",
+        "caution": "주의사항"
       },
       "emergency": {
         "police": "경찰 번호",
@@ -108,11 +112,7 @@ JSON만.`
       },
       "visa": {
         "korean": "한국인 비자 조건",
-        "duration": "무비자 체류 가능 기간"
-      },
-      "weather": {
-        "best": "여행 최적 시기",
-        "tip": "날씨 관련 팁"
+        "duration": "무비자 체류 기간"
       },
       "phrases": [
         {"korean": "감사합니다", "local": "현지어", "pronunciation": "발음"}
